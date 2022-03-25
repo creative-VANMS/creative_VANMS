@@ -1,0 +1,50 @@
+ArrayList<Beat> beats = new ArrayList<Beat>();
+
+void setup() {
+  size(500, 500);
+  background(0,94,166);
+}
+
+void draw() {
+  background(0,94,166);
+
+  for (Beat b : beats) {
+    b.grow();
+    b.display();
+  }
+    //keyPressed();
+}
+
+void mousePressed() {
+  beats.add(new Beat(mouseX, mouseY) );
+}
+
+class Beat {
+
+  PVector loc; // center of  Beat as a PVector
+  float d = 0; // starting diameter for Beat
+  float growrate = .80; // "grow speed" for  Beat 
+  int maxd = 100; // how big Beat grows
+
+  Beat (int x, int y) {
+    loc = new PVector(x, y);
+  }
+
+  void display() {
+    stroke(255);
+    noFill();
+    ellipse(loc.x, loc.y, d, d);
+  }
+
+  void grow() {
+    d += growrate;
+  }
+
+}
+
+void keyPressed() {
+  if (key == 'c') {
+   // print("dogs");
+     beats.remove(0);
+   }
+}
