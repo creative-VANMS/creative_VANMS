@@ -1,0 +1,119 @@
+import processing.serial.*;
+
+Serial myPort;
+
+String myString = null;
+int nl =10;
+float myVal;
+float myVal2;
+float myVal3;
+
+//tracking arrays
+float[] xP = new float[50];
+float[] yP = new float[50];
+
+Particle [] pickles = new Particle [100];
+
+void setup() {
+  size(1000, 1000);
+  printArray(Serial.list());
+  // Open the port you are using at the rate you want:
+  myPort = new Serial(this, Serial.list()[0], 115200);
+
+  frameRate(60);
+  smooth();
+  for (int i = 0; i < xP.length; i ++ ) {
+    xP[i] = 0;
+    yP[i] = 0;
+  }
+
+
+  for (int i=0; i<pickles.length; i++) {
+    pickles [i] = new Particle ();
+  }
+}
+
+void draw() {
+  gyr();
+}
+
+void gyr() {
+
+  while (myPort.available() > 0) {
+    String inBuffer = myPort.readString();
+    delay(3);
+    if (inBuffer != null) {
+      println("data: ", inBuffer);
+      String[] list = split(inBuffer, ',');
+
+      if (list.length == 3) {
+        println("xraw: ", list[0]);
+        println("yraw: ", list[1]);
+        println("zraw: ", list[2]);
+        //String test = inBuffer.substring(7, 13);
+        //println("result: ", inBuffer.length());
+        myVal = float (list[0]);
+        myVal2 = float (list[1]);
+        myVal3 = float (list[2]);
+      }
+
+      background(0);
+      for (int i = 0; i < xP.length-1; i ++ ) {
+        xP[i] = xP[i+1];
+        yP[i] = yP[i+1];
+      }
+      xP[xP.length-1] = myVal;
+      yP[yP.length-1] = myVal2;
+
+      for (int i = 0; i < xP.length; i ++ ) {
+        strokeWeight(5);
+        stroke(#39FF14);
+        fill(0);
+        ellipse(xP[i], yP[i], i, i);
+      }
+      if ((myVal3 < 300) && (myVal < 300) && (myVal2 < 300)) {
+        for (int i=0; i<pickles.length; i++) {
+          if ((myVal3 < 300) && (myVal < 300) && (myVal2 < 300)) {
+            pickles[i].update();
+          }
+        }
+      } else if ((myVal3 > 300) && (myVal > 300) && (myVal2 > 300)) {
+        for (int r=0; r<pickles.length; r++) {
+          pickles[r].x=myVal;
+          pickles[r].y=myVal2;
+        }
+      }
+    }
+  }
+}
+
+
+class Particle {
+
+  float x;
+  float y;
+
+  float velX;
+  float velY;
+
+
+  Particle () {
+    x = myVal;
+    y = myVal2;
+
+    velX = random (-10, 10);
+    velY = random (-10, 10);
+  }
+
+
+  void update () {
+
+    x+=velX;
+    y+=velY;
+
+    strokeWeight(5);
+    stroke(#39FF14);
+    fill(0);
+    ellipse(x, y, 50, 50);
+  }
+}
