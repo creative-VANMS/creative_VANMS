@@ -1,0 +1,78 @@
+boolean play = true;
+
+//bubbles variable
+int[] xP = new int[50];
+int[] yP = new int[50];
+
+//tick variables
+int canvasWidth = 500;
+int canvasHeight = 500; 
+int tickX = 25;
+int tickY = 500;
+int tickX_speed = 20;
+int tickY_decrease = 5;
+int tick_size = 50;
+
+void setup() {
+  size(500,500);
+  frameRate(60);
+  smooth();
+  background(0);
+}
+
+void draw() {
+  if((mouseX > 225 && mouseX < 275) && (mouseY > 225 && mouseY < 275) )  {
+    ticktick();
+  } else {
+    background(0);
+    bubbles();
+  }
+}
+
+void bubbles(){
+  background(0);
+  noStroke();
+  fill(#FF0000);
+  ellipse(canvasWidth/2, canvasHeight/2, 50, 50);
+  for (int i = 0; i < xP.length-1; i ++ ) {
+    xP[i] = xP[i+1];
+    yP[i] = yP[i+1];
+  }
+
+  xP[xP.length-1] = mouseX;
+  yP[yP.length-1] = mouseY;
+ 
+  for (int i = 0; i < xP.length; i ++ ) {
+    strokeWeight(5);
+    stroke(#39FF14);
+    fill(0);
+    ellipse(xP[i],yP[i],i,i);
+  }  
+}
+
+void ticktick(){
+  fill(0,35);
+  rect(0, 0, canvasWidth, canvasHeight);
+  strokeWeight(5);
+    stroke(#39FF14);
+    fill(0);
+  ellipse(tickX, tickY, tick_size, tick_size);
+  tickY-=tickY_decrease;
+  tickX+=tickX_speed;
+
+  if(tickX > canvasWidth || tickX < 0) {
+    tickX_speed*=-1;
+    strokeWeight(20);
+    stroke(#39FF14);
+  } else {
+    tick_size = 50;
+    noStroke();
+    fill(#39FF14);
+  }
+  
+  if(tickY < 0) {
+    tickY=canvasHeight;
+    tickX_speed=20;
+  }
+  
+}
